@@ -15,35 +15,37 @@ export function daysUntil(dateString: string): number {
   return differenceInDays(parseISO(dateString), new Date());
 }
 
+// Neon-dark urgency colours
 export function urgencyColor(days: number): string {
-  if (days < 0) return 'text-slate-400';
-  if (days <= 7) return 'text-red-600';
-  if (days <= 30) return 'text-amber-600';
-  return 'text-emerald-600';
+  if (days < 0)  return 'text-slate-500';
+  if (days <= 7)  return 'text-pink-400';
+  if (days <= 30) return 'text-amber-400';
+  return 'text-emerald-400';
 }
 
 export function urgencyBg(days: number): string {
-  if (days < 0) return 'bg-slate-100 border-slate-200';
-  if (days <= 7) return 'bg-red-50 border-red-200';
-  if (days <= 30) return 'bg-amber-50 border-amber-200';
-  return 'bg-emerald-50 border-emerald-200';
+  if (days < 0)   return 'bg-slate-800/50 border-slate-700';
+  if (days <= 7)  return 'bg-pink-500/10 border-pink-500/25';
+  if (days <= 30) return 'bg-amber-500/10 border-amber-500/25';
+  return 'bg-emerald-500/10 border-emerald-500/25';
 }
 
+// Neon category tokens
 export const CATEGORY_META: Record<
   PostCategory,
-  { label: string; color: string; bg: string }
+  { label: string; color: string; bg: string; border: string }
 > = {
-  tax:     { label: 'Tax',     color: 'text-amber-700',   bg: 'bg-amber-100' },
-  work:    { label: 'Work',    color: 'text-blue-700',    bg: 'bg-blue-100' },
-  social:  { label: 'Social',  color: 'text-emerald-700', bg: 'bg-emerald-100' },
-  housing: { label: 'Housing', color: 'text-purple-700',  bg: 'bg-purple-100' },
-  visa:    { label: 'Visa',    color: 'text-indigo-700',  bg: 'bg-indigo-100' },
-  general: { label: 'General', color: 'text-slate-700',   bg: 'bg-slate-100' },
+  tax:     { label: 'Tax',     color: 'text-amber-400',   bg: 'bg-amber-400/10',   border: 'border-amber-400/25' },
+  work:    { label: 'Work',    color: 'text-cyan-400',    bg: 'bg-cyan-400/10',    border: 'border-cyan-400/25' },
+  social:  { label: 'Social',  color: 'text-emerald-400', bg: 'bg-emerald-400/10', border: 'border-emerald-400/25' },
+  housing: { label: 'Housing', color: 'text-violet-400',  bg: 'bg-violet-400/10',  border: 'border-violet-400/25' },
+  visa:    { label: 'Visa',    color: 'text-pink-400',    bg: 'bg-pink-400/10',    border: 'border-pink-400/25' },
+  general: { label: 'General', color: 'text-slate-400',   bg: 'bg-slate-400/10',   border: 'border-slate-400/25' },
 };
 
 export function getAvatarUrl(username: string, avatarUrl?: string | null): string {
   if (avatarUrl) return avatarUrl;
-  return `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(username)}&backgroundColor=6366f1&textColor=ffffff`;
+  return `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(username)}&backgroundColor=7c3aed&textColor=ffffff`;
 }
 
 export function clampText(text: string, maxLength: number): string {

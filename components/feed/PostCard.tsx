@@ -13,21 +13,16 @@ interface PostCardProps {
 
 export default function PostCard({ post, currentUserId }: PostCardProps) {
   const [upvoteCount, setUpvoteCount] = useState(post.upvote_count);
-  const [userVoted, setUserVoted] = useState(post.user_voted ?? false);
-  const [voting, setVoting] = useState(false);
+  const [userVoted, setUserVoted]     = useState(post.user_voted ?? false);
+  const [voting, setVoting]           = useState(false);
 
-  const meta = CATEGORY_META[post.category];
+  const meta           = CATEGORY_META[post.category];
   const authorUsername = post.profiles?.username ?? 'unknown';
-  const avatarUrl = getAvatarUrl(authorUsername, post.profiles?.avatar_url);
+  const avatarUrl      = getAvatarUrl(authorUsername, post.profiles?.avatar_url);
 
   async function handleUpvote() {
-    if (!currentUserId) {
-      // TODO: open auth modal
-      return;
-    }
-    if (voting) return;
+    if (!currentUserId || voting) return;
 
-    // Optimistic update
     const wasVoted = userVoted;
     setUserVoted(!wasVoted);
     setUpvoteCount((c) => (wasVoted ? c - 1 : c + 1));
@@ -39,14 +34,11 @@ export default function PostCard({ post, currentUserId }: PostCardProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ postId: post.id }),
       });
-
-      if (!res.ok) throw new Error('Vote failed');
-
+      if (!res.ok) throw new Error();
       const data = await res.json();
       setUpvoteCount(data.upvote_count);
       setUserVoted(data.user_voted);
     } catch {
-      // Revert optimistic update on failure
       setUserVoted(wasVoted);
       setUpvoteCount((c) => (wasVoted ? c + 1 : c - 1));
     } finally {
@@ -55,57 +47,57 @@ export default function PostCard({ post, currentUserId }: PostCardProps) {
   }
 
   return (
-    <article className="card p-5 transition-shadow hover:shadow-md">
+    <article className="card-glow p-5 group">
       {/* Header */}
       <div className="mb-3 flex items-start justify-between gap-3">
         <div className="flex items-center gap-2.5">
           <Image
             src={avatarUrl}
             alt={authorUsername}
-            width={32}
-            height={32}
-            className="rounded-full"
+            width={30}
+            height={30}
+            className="rounded-full ring-1 ring-slate-700"
           />
-          <div>
-            <span className="text-sm font-medium text-slate-800">@{authorUsername}</span>
-            <span className="ml-2 text-xs text-slate-400">{timeAgo(post.created_at)}</span>
+          <div className="flex items-baseline gap-2">
+            <span className="text-sm font-medium text-slate-300">@{authorUsername}</span>
+            <span className="text-[11px] text-slate-600">{timeAgo(post.created_at)}</span>
           </div>
         </div>
-        <span className={cn('badge', meta.bg, meta.color)}>{meta.label}</span>
+
+        {/* Category badge */}
+        <span className={cn('badge text-[11px]', meta.color, meta.bg, meta.border)}>
+          {meta.label}
+        </span>
       </div>
 
       {/* Content */}
-      <h3 className="mb-1.5 text-base font-semibold text-slate-900 leading-snug">
+      <h3 className="mb-1.5 text-sm font-semibold text-slate-100 leading-snug group-hover:text-white transition-colors">
         {post.title}
       </h3>
-      <p className="text-sm leading-relaxed text-slate-600">
-        {clampText(post.body, 220)}
+      <p className="text-sm leading-relaxed text-slate-500">
+        {clampText(post.body, 200)}
       </p>
 
       {/* Actions */}
-      <div className="mt-4 flex items-center gap-4">
-        {/* Upvote */}
+      <div className="mt-4 flex items-center gap-3">
         <button
           onClick={handleUpvote}
           disabled={voting}
           aria-label={userVoted ? 'Remove upvote' : 'Upvote'}
           className={cn(
-            'flex items-center gap-1.5 rounded-md px-2.5 py-1 text-sm font-medium transition-colors',
+            'flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-all',
             userVoted
-              ? 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100'
-              : 'text-slate-500 hover:bg-slate-100 hover:text-slate-800',
-            !currentUserId && 'cursor-default opacity-60'
+              ? 'bg-violet-500/15 text-violet-400 shadow-[0_0_8px_rgba(139,92,246,0.2)]'
+              : 'text-slate-500 hover:bg-slate-800 hover:text-slate-300',
+            !currentUserId && 'cursor-default opacity-50'
           )}
         >
-          <ArrowUp
-            className={cn('h-4 w-4 transition-transform', voting && 'animate-bounce')}
-          />
+          <ArrowUp className={cn('h-3.5 w-3.5', userVoted && 'text-violet-400')} />
           <span>{upvoteCount}</span>
         </button>
 
-        {/* Comment count */}
-        <button className="flex items-center gap-1.5 rounded-md px-2.5 py-1 text-sm text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors">
-          <MessageSquare className="h-4 w-4" />
+        <button className="flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs text-slate-500 hover:bg-slate-800 hover:text-slate-300 transition-all">
+          <MessageSquare className="h-3.5 w-3.5" />
           <span>{post.comment_count}</span>
         </button>
       </div>

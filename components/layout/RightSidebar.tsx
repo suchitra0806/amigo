@@ -2,40 +2,36 @@
 
 import Link from 'next/link';
 import { format, parseISO } from 'date-fns';
-import { CalendarClock, ExternalLink, Info } from 'lucide-react';
+import { CalendarClock, ExternalLink, ShieldCheck, Zap } from 'lucide-react';
 import { getUpcomingDeadlines } from '@/lib/constants/deadlines';
 import { daysUntil, urgencyColor, urgencyBg, cn } from '@/lib/utils';
 
 const DEADLINES = getUpcomingDeadlines(4);
 
-const CATEGORY_LABELS: Record<string, string> = {
-  federal: 'Federal',
-  immigration: 'Immigration',
-  employment: 'Employment',
-  state: 'State',
-};
-
 export default function RightSidebar() {
   return (
     <div className="flex flex-col gap-6 px-4 py-6">
-      {/* Deadlines widget */}
+
+      {/* Deadline countdown widget */}
       <section>
         <div className="mb-3 flex items-center gap-2">
-          <CalendarClock className="h-4 w-4 text-indigo-600" />
-          <h2 className="text-sm font-semibold text-slate-800">Upcoming Deadlines</h2>
+          <CalendarClock className="h-4 w-4 text-violet-400" />
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+            Upcoming Deadlines
+          </h2>
           <Link
             href="/taxes"
-            className="ml-auto text-xs font-medium text-indigo-600 hover:underline"
+            className="ml-auto text-[11px] font-medium text-violet-400 hover:text-violet-300 transition-colors"
           >
-            View all
+            View all →
           </Link>
         </div>
 
-        {DEADLINES.length === 0 ? (
-          <p className="text-xs text-slate-500">No upcoming deadlines found.</p>
-        ) : (
-          <div className="space-y-2.5">
-            {DEADLINES.map((deadline) => {
+        <div className="space-y-2">
+          {DEADLINES.length === 0 ? (
+            <p className="text-xs text-slate-600">No upcoming deadlines.</p>
+          ) : (
+            DEADLINES.map((deadline) => {
               const days = daysUntil(deadline.date);
               return (
                 <DeadlineChip
@@ -46,38 +42,44 @@ export default function RightSidebar() {
                   docsUrl={deadline.docsUrl}
                 />
               );
-            })}
-          </div>
-        )}
+            })
+          )}
+        </div>
       </section>
 
-      {/* F-1 Quick reference */}
-      <section className="rounded-xl border border-indigo-100 bg-indigo-50 p-4">
-        <div className="mb-2 flex items-center gap-2">
-          <Info className="h-4 w-4 text-indigo-600" />
-          <h2 className="text-sm font-semibold text-indigo-800">F-1 Quick Rules</h2>
+      {/* F-1 Quick Rules */}
+      <section className="rounded-xl border border-violet-500/20 bg-violet-500/5 p-4">
+        <div className="mb-3 flex items-center gap-2">
+          <ShieldCheck className="h-4 w-4 text-violet-400" />
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-violet-400">
+            F-1 Quick Rules
+          </h2>
         </div>
-        <ul className="space-y-1.5 text-xs text-indigo-700">
-          <li>
-            <span className="font-semibold">On-campus:</span> Max 20 hrs/week while school is in session
-          </li>
-          <li>
-            <span className="font-semibold">CPT:</span> Authorized before you start — no work without I-20 endorsement
-          </li>
-          <li>
-            <span className="font-semibold">OPT:</span> Apply 90 days before program end; 90-day unemployment cap
-          </li>
-          <li>
-            <span className="font-semibold">STEM OPT:</span> Extends to 36 months; employer must be E-Verify enrolled
-          </li>
+        <ul className="space-y-2 text-xs text-slate-400">
+          {[
+            ['On-campus', 'Max 20 hrs/week during semester'],
+            ['CPT',       'I-20 endorsement required before start'],
+            ['OPT',       'Apply 90 days before program end'],
+            ['STEM OPT',  'Employer must be E-Verify enrolled'],
+          ].map(([term, desc]) => (
+            <li key={term} className="flex items-start gap-2">
+              <Zap className="mt-0.5 h-3 w-3 flex-shrink-0 text-violet-500" />
+              <span>
+                <span className="font-semibold text-slate-300">{term}: </span>
+                {desc}
+              </span>
+            </li>
+          ))}
         </ul>
       </section>
 
       {/* Disclaimer */}
-      <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-[11px] leading-snug text-amber-800">
-        <span className="font-semibold">Not Financial or Legal Advice.</span>{' '}
-        This information is for general educational purposes only. Consult a licensed tax professional or immigration attorney for advice specific to your situation.
-      </p>
+      <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 px-3 py-2.5">
+        <p className="text-[10px] leading-snug text-amber-400/80">
+          <span className="font-semibold text-amber-400">Not Financial or Legal Advice.</span>{' '}
+          For educational purposes only. Consult your DSO or a licensed professional for guidance specific to your situation.
+        </p>
+      </div>
     </div>
   );
 }
@@ -94,21 +96,19 @@ function DeadlineChip({
   docsUrl?: string;
 }) {
   const colorClass = urgencyColor(days);
-  const bgClass = urgencyBg(days);
+  const bgClass    = urgencyBg(days);
+
   const label =
-    days < 0
-      ? 'Passed'
-      : days === 0
-      ? 'Today!'
-      : days === 1
-      ? '1 day left'
-      : `${days} days`;
+    days < 0 ? 'Passed' :
+    days === 0 ? 'Today!' :
+    days === 1 ? '1 day' :
+    `${days}d`;
 
   return (
-    <div className={cn('flex items-center gap-3 rounded-lg border px-3 py-2.5', bgClass)}>
+    <div className={cn('flex items-center gap-3 rounded-lg border px-3 py-2.5 transition-colors', bgClass)}>
       <div className="min-w-0 flex-1">
-        <p className="truncate text-xs font-semibold text-slate-800">{title}</p>
-        <p className="text-[11px] text-slate-500">
+        <p className="truncate text-xs font-semibold text-slate-200">{title}</p>
+        <p className="text-[10px] text-slate-500">
           {format(parseISO(date), 'MMM d, yyyy')}
         </p>
       </div>
@@ -119,8 +119,8 @@ function DeadlineChip({
             href={docsUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="opacity-60 hover:opacity-100"
-            aria-label="IRS documentation"
+            className="opacity-50 hover:opacity-100 transition-opacity"
+            aria-label="Official docs"
           >
             <ExternalLink className="h-3 w-3" />
           </a>

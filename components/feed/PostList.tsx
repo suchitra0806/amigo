@@ -30,22 +30,23 @@ export default function PostList({ posts, currentUserId }: PostListProps) {
 
   return (
     <div>
-      {/* Category filter tabs */}
+      {/* Category tabs */}
       <div className="mb-5 flex flex-wrap gap-1.5">
         {CATEGORIES.map(({ value, label }) => {
           const isActive = activeCategory === value;
           const meta = value !== 'all' ? CATEGORY_META[value] : null;
+
           return (
             <button
               key={value}
               onClick={() => setActiveCategory(value)}
               className={cn(
-                'rounded-full px-3 py-1 text-xs font-medium transition-colors',
+                'rounded-full px-3 py-1 text-xs font-medium transition-all border',
                 isActive
                   ? meta
-                    ? cn(meta.bg, meta.color)
-                    : 'bg-indigo-600 text-white'
-                  : 'bg-white text-slate-600 ring-1 ring-slate-200 hover:bg-slate-50'
+                    ? cn(meta.color, meta.bg, meta.border, 'shadow-sm')
+                    : 'bg-violet-500/15 text-violet-300 border-violet-500/30 shadow-[0_0_10px_rgba(139,92,246,0.15)]'
+                  : 'bg-slate-900 text-slate-500 border-slate-800 hover:border-slate-700 hover:text-slate-300'
               )}
             >
               {label}
@@ -54,14 +55,15 @@ export default function PostList({ posts, currentUserId }: PostListProps) {
         })}
       </div>
 
-      {/* Post list */}
+      {/* Posts */}
       {filtered.length === 0 ? (
-        <div className="flex flex-col items-center gap-2 py-20 text-center">
-          <p className="text-slate-500 text-sm">No posts in this category yet.</p>
-          <p className="text-xs text-slate-400">Be the first to share something!</p>
+        <div className="flex flex-col items-center gap-2 py-24 text-center">
+          <div className="text-3xl mb-1">👾</div>
+          <p className="text-sm text-slate-500">No posts here yet.</p>
+          <p className="text-xs text-slate-600">Be the first to drop something!</p>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-3">
           {filtered.map((post) => (
             <PostCard key={post.id} post={post} currentUserId={currentUserId} />
           ))}

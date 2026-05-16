@@ -3,22 +3,24 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  Newspaper,
+  LayoutDashboard,
   Receipt,
   ClipboardList,
   BookOpen,
   Settings,
   GraduationCap,
   LogIn,
-  Zap,
+  Sparkles,
+  UserCircle,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const NAV_ITEMS = [
-  { href: '/feed',      label: 'Community Feed', icon: Newspaper },
-  { href: '/taxes',     label: 'Tax Hub',        icon: Receipt },
-  { href: '/work-log',  label: 'Work Log',       icon: ClipboardList },
-  { href: '/resources', label: 'Resources',      icon: BookOpen },
+  { href: '/dashboard', label: 'Dashboard',  icon: LayoutDashboard },
+  { href: '/taxes',     label: 'Tax Hub',    icon: Receipt },
+  { href: '/work-log',  label: 'Work Log',   icon: ClipboardList },
+  { href: '/resources', label: 'Resources',  icon: BookOpen },
+  { href: '/profile',   label: 'My Profile', icon: UserCircle },
 ];
 
 export default function Sidebar() {
@@ -27,21 +29,20 @@ export default function Sidebar() {
   return (
     <div className="flex h-full flex-col px-3 py-5">
       {/* Brand */}
-      <Link href="/feed" className="mb-8 flex items-center gap-3 px-3">
-        <div className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-violet-600 shadow-neon-purple">
+      <Link href="/dashboard" className="mb-8 flex items-center gap-3 px-3">
+        <div className="relative flex h-10 w-10 items-center justify-center rounded-2xl bg-neutral-900 shadow-chibi">
           <GraduationCap className="h-5 w-5 text-white" />
-          {/* pulse ring */}
-          <span className="absolute inset-0 rounded-xl ring-2 ring-violet-500/40 animate-pulse-slow" />
+          <span className="absolute inset-0 rounded-2xl ring-2 ring-black/10 animate-pulse-slow" />
         </div>
         <div>
-          <span className="neon-text text-lg font-bold tracking-tight">Amigo</span>
-          <p className="text-[10px] text-slate-500 leading-none mt-0.5">F-1 Student Hub</p>
+          <span className="neon-text text-lg font-black tracking-tight">Amigo</span>
+          <p className="text-[10px] text-neutral-400 font-semibold leading-none mt-0.5">Student Portal</p>
         </div>
       </Link>
 
       {/* Nav */}
       <nav className="flex-1 space-y-1">
-        <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-widest text-slate-600">
+        <p className="mb-2 px-4 text-[10px] font-black uppercase tracking-widest text-neutral-400">
           Navigate
         </p>
         {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
@@ -55,7 +56,7 @@ export default function Sidebar() {
               <Icon className="h-4 w-4 flex-shrink-0" />
               {label}
               {isActive && (
-                <span className="ml-auto h-1.5 w-1.5 rounded-full bg-violet-400 shadow-[0_0_6px_rgba(167,139,250,0.8)]" />
+                <span className="ml-auto h-2 w-2 rounded-full bg-white/60" />
               )}
             </Link>
           );
@@ -63,7 +64,7 @@ export default function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="space-y-1 border-t border-slate-800 pt-4">
+      <div className="space-y-1 border-t border-neutral-100 pt-4">
         <Link href="/settings" className="nav-link">
           <Settings className="h-4 w-4" />
           Settings
@@ -74,12 +75,14 @@ export default function Sidebar() {
         </Link>
 
         {/* Tagline */}
-        <div className="mt-3 mx-2 rounded-lg bg-violet-500/8 border border-violet-500/15 px-3 py-2.5">
+        <div className="mt-3 mx-1 rounded-2xl bg-neutral-100 border border-neutral-200 px-3 py-3">
           <div className="flex items-center gap-1.5 mb-1">
-            <Zap className="h-3 w-3 text-violet-400" />
-            <span className="text-[10px] font-semibold text-violet-400 uppercase tracking-wider">Built for F-1s</span>
+            <Sparkles className="h-3 w-3 text-neutral-500" />
+            <span className="text-[10px] font-black text-neutral-600 uppercase tracking-wider">
+              Built for F-1s
+            </span>
           </div>
-          <p className="text-[10px] leading-snug text-slate-500">
+          <p className="text-[10px] leading-snug text-neutral-400 font-medium">
             Not legal or financial advice.
           </p>
         </div>

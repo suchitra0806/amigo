@@ -55,25 +55,27 @@ export default function ChatWidget({ onClose: _onClose }: { onClose: () => void 
   }
 
   return (
-    <div className="animate-slide-up fixed bottom-24 right-6 z-50 flex h-[520px] w-[360px] flex-col rounded-2xl border border-slate-700 bg-slate-900 shadow-[0_0_40px_rgba(0,0,0,0.5)]">
+    <div className="animate-slide-up fixed bottom-24 right-6 z-50 flex h-[520px] w-[360px] flex-col rounded-3xl border border-neutral-200 bg-white shadow-chibi-xl">
       {/* Header */}
-      <div className="flex items-center gap-3 rounded-t-2xl border-b border-slate-800 bg-slate-900 px-4 py-3">
-        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-violet-600 shadow-neon-purple">
+      <div className="flex items-center gap-3 rounded-t-3xl border-b border-neutral-100 bg-white px-4 py-3">
+        <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-neutral-900 shadow-chibi">
           <GraduationCap className="h-4 w-4 text-white" />
         </div>
         <div>
-          <p className="text-sm font-semibold text-slate-100">Amigo <span className="neon-text">AI</span></p>
-          <div className="flex items-center gap-1">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_4px_rgba(52,211,153,0.8)] animate-pulse" />
-            <p className="text-[10px] text-slate-500">F-1 student assistant</p>
+          <p className="text-sm font-black text-neutral-900">
+            Amigo <span className="neon-text">AI</span>
+          </p>
+          <div className="flex items-center gap-1.5">
+            <span className="h-1.5 w-1.5 rounded-full bg-neutral-900 animate-pulse" />
+            <p className="text-[10px] text-neutral-400 font-semibold">F-1 student assistant</p>
           </div>
         </div>
       </div>
 
       {/* Disclaimer */}
-      <div className="flex items-center gap-1.5 border-b border-amber-500/15 bg-amber-500/5 px-3 py-2">
-        <AlertTriangle className="h-3 w-3 flex-shrink-0 text-amber-400" />
-        <p className="text-[10px] text-amber-400/80">
+      <div className="flex items-center gap-1.5 border-b border-neutral-100 bg-neutral-50 px-3 py-2">
+        <AlertTriangle className="h-3 w-3 flex-shrink-0 text-neutral-400" />
+        <p className="text-[10px] text-neutral-500 font-semibold">
           Not legal/financial advice — verify with your DSO.
         </p>
       </div>
@@ -84,10 +86,10 @@ export default function ChatWidget({ onClose: _onClose }: { onClose: () => void 
           <div key={i} className={cn('flex', msg.role === 'user' ? 'justify-end' : 'justify-start')}>
             <div
               className={cn(
-                'max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed whitespace-pre-wrap',
+                'max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed whitespace-pre-wrap font-medium',
                 msg.role === 'user'
-                  ? 'rounded-br-sm bg-violet-600 text-white shadow-[0_0_12px_rgba(139,92,246,0.3)]'
-                  : 'rounded-bl-sm bg-slate-800 text-slate-300 border border-slate-700'
+                  ? 'rounded-br-sm bg-neutral-900 text-white'
+                  : 'rounded-bl-sm bg-neutral-100 text-neutral-800 border border-neutral-200'
               )}
             >
               {msg.content}
@@ -97,9 +99,9 @@ export default function ChatWidget({ onClose: _onClose }: { onClose: () => void 
 
         {loading && (
           <div className="flex justify-start">
-            <div className="flex items-center gap-2 rounded-2xl rounded-bl-sm bg-slate-800 border border-slate-700 px-4 py-3">
-              <Loader2 className="h-3.5 w-3.5 animate-spin text-violet-400" />
-              <span className="text-xs text-slate-500">Thinking…</span>
+            <div className="flex items-center gap-2 rounded-2xl rounded-bl-sm bg-neutral-100 border border-neutral-200 px-4 py-3">
+              <Loader2 className="h-3.5 w-3.5 animate-spin text-neutral-500" />
+              <span className="text-xs text-neutral-400 font-semibold">Thinking…</span>
             </div>
           </div>
         )}
@@ -107,8 +109,8 @@ export default function ChatWidget({ onClose: _onClose }: { onClose: () => void 
       </div>
 
       {/* Input */}
-      <div className="border-t border-slate-800 p-3">
-        <div className="flex items-end gap-2 rounded-xl bg-slate-800 px-3 py-2 ring-1 ring-slate-700 focus-within:ring-violet-500/40 transition-shadow">
+      <div className="border-t border-neutral-100 p-3">
+        <div className="flex items-end gap-2 rounded-2xl bg-neutral-100 px-3 py-2 ring-1 ring-neutral-200 focus-within:ring-neutral-900/20 transition-shadow">
           <textarea
             ref={inputRef}
             rows={1}
@@ -116,22 +118,22 @@ export default function ChatWidget({ onClose: _onClose }: { onClose: () => void 
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={onKeyDown}
             placeholder="Ask about OPT, taxes, CPT…"
-            className="max-h-28 flex-1 resize-none bg-transparent text-sm text-slate-200 placeholder-slate-600 focus:outline-none"
+            className="max-h-28 flex-1 resize-none bg-transparent text-sm text-neutral-900 placeholder-neutral-400 focus:outline-none font-medium"
           />
           <button
             onClick={send}
             disabled={!input.trim() || loading}
             className={cn(
-              'mb-0.5 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg transition-all',
+              'mb-0.5 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-xl transition-all',
               input.trim() && !loading
-                ? 'bg-violet-600 text-white hover:bg-violet-500 shadow-[0_0_8px_rgba(139,92,246,0.4)]'
-                : 'bg-slate-700 text-slate-500 cursor-not-allowed'
+                ? 'bg-neutral-900 text-white hover:bg-black shadow-chibi'
+                : 'bg-neutral-200 text-neutral-400 cursor-not-allowed'
             )}
           >
             <Send className="h-3.5 w-3.5" />
           </button>
         </div>
-        <p className="mt-1.5 text-center text-[10px] text-slate-700">
+        <p className="mt-1.5 text-center text-[10px] text-neutral-400 font-medium">
           Powered by Gemini · Shift+Enter for new line
         </p>
       </div>

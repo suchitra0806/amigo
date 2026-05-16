@@ -15,19 +15,19 @@ export function daysUntil(dateString: string): number {
   return differenceInDays(parseISO(dateString), new Date());
 }
 
-// Neon-dark urgency colours
+// B&W urgency — darkness increases with urgency
 export function urgencyColor(days: number): string {
-  if (days < 0)  return 'text-slate-500';
-  if (days <= 7)  return 'text-pink-400';
-  if (days <= 30) return 'text-amber-400';
-  return 'text-emerald-400';
+  if (days < 0)  return 'text-neutral-400';
+  if (days <= 7)  return 'text-neutral-900';
+  if (days <= 30) return 'text-neutral-700';
+  return 'text-neutral-500';
 }
 
 export function urgencyBg(days: number): string {
-  if (days < 0)   return 'bg-slate-800/50 border-slate-700';
-  if (days <= 7)  return 'bg-pink-500/10 border-pink-500/25';
-  if (days <= 30) return 'bg-amber-500/10 border-amber-500/25';
-  return 'bg-emerald-500/10 border-emerald-500/25';
+  if (days < 0)  return 'bg-neutral-100 border-neutral-200';
+  if (days <= 7)  return 'bg-black/5 border-black/20';
+  if (days <= 30) return 'bg-neutral-100 border-neutral-300';
+  return 'bg-neutral-50 border-neutral-200';
 }
 
 // Neon category tokens

@@ -2,24 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
 
 @layer base {
-  :root {
-    --neon-purple: 167 139 250;   /* violet-400 */
-    --neon-cyan:   34  211 238;   /* cyan-400   */
-    --neon-green:  52  211 153;   /* emerald-400*/
-    --neon-pink:   244 114 182;   /* pink-400   */
-    --neon-amber:  251 191 36;    /* amber-400  */
-  }
-
   html { @apply scroll-smooth; }
 
   body {
-    @apply bg-slate-950 text-slate-200 font-sans antialiased;
-    /* subtle dot-grid — the gaming touch */
-    background-image: radial-gradient(rgba(167,139,250,0.06) 1px, transparent 1px);
-    background-size: 28px 28px;
+    @apply bg-neutral-50 text-neutral-900 font-sans antialiased;
+    background-image: radial-gradient(rgba(0,0,0,0.05) 1px, transparent 1px);
+    background-size: 24px 24px;
   }
 
   * { @apply box-border; }
@@ -28,68 +19,67 @@
 @layer components {
   /* ── Buttons ─────────────────────────────── */
   .btn-primary {
-    @apply inline-flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white
-           shadow-[0_0_16px_rgba(139,92,246,0.4)] transition-all
-           hover:bg-violet-500 hover:shadow-[0_0_22px_rgba(139,92,246,0.6)]
-           focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-500
-           disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none;
+    @apply inline-flex items-center gap-2 rounded-full bg-neutral-900 px-5 py-2 text-sm font-bold text-white
+           shadow-[0_4px_14px_rgba(0,0,0,0.12)] transition-all
+           hover:bg-black hover:shadow-[0_6px_20px_rgba(0,0,0,0.18)] hover:-translate-y-px
+           focus-visible:outline focus-visible:outline-2 focus-visible:outline-black focus-visible:outline-offset-2
+           disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none disabled:translate-y-0;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center gap-2 rounded-lg bg-slate-800 px-4 py-2 text-sm font-semibold text-slate-300
-           ring-1 ring-slate-700 transition-all
-           hover:bg-slate-700 hover:text-slate-100
-           disabled:opacity-40;
+    @apply inline-flex items-center gap-2 rounded-full bg-white px-5 py-2 text-sm font-bold text-neutral-800
+           ring-1 ring-neutral-200 shadow-sm transition-all
+           hover:bg-neutral-100 hover:text-black hover:-translate-y-px
+           disabled:opacity-40 disabled:translate-y-0;
   }
 
   /* ── Cards ───────────────────────────────── */
   .card {
-    @apply rounded-xl bg-slate-900 border border-slate-800;
+    @apply rounded-2xl bg-white border border-neutral-200 shadow-[0_2px_8px_rgba(0,0,0,0.05)];
   }
 
   .card-glow {
-    @apply card transition-all hover:border-violet-500/30 hover:shadow-[0_0_20px_rgba(139,92,246,0.08)];
+    @apply card transition-all hover:border-neutral-300 hover:shadow-[0_6px_20px_rgba(0,0,0,0.08)] hover:-translate-y-px;
   }
 
   /* ── Inputs ──────────────────────────────── */
   .input {
-    @apply block w-full rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-100
-           placeholder-slate-500 shadow-sm transition-colors
-           focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500/40;
+    @apply block w-full rounded-xl border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-900
+           placeholder-neutral-400 shadow-sm transition-colors
+           focus:border-neutral-900 focus:outline-none focus:ring-2 focus:ring-black/10;
   }
 
   /* ── Badges ──────────────────────────────── */
   .badge {
-    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium border;
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold border;
   }
 
   /* ── Nav ─────────────────────────────────── */
   .nav-link {
-    @apply flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-400
-           transition-all hover:bg-slate-800 hover:text-slate-100;
+    @apply flex items-center gap-3 rounded-full px-4 py-2.5 text-sm font-bold text-neutral-500
+           transition-all hover:bg-neutral-100 hover:text-neutral-900;
   }
 
   .nav-link-active {
-    @apply bg-violet-600/15 text-violet-300 border border-violet-500/20
-           shadow-[inset_0_0_12px_rgba(139,92,246,0.08)]
-           hover:bg-violet-600/20 hover:text-violet-200;
+    @apply bg-neutral-900 text-white border-none shadow-[0_4px_12px_rgba(0,0,0,0.12)]
+           hover:bg-black hover:text-white;
   }
 
-  /* ── Neon text ───────────────────────────── */
+  /* ── Brand text ──────────────────────────── */
   .neon-text {
-    @apply bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent;
+    @apply bg-gradient-to-br from-black to-neutral-500 bg-clip-text text-transparent;
   }
 
   /* ── Divider ─────────────────────────────── */
   .divider {
-    @apply border-slate-800;
+    @apply border-neutral-200;
   }
 }
 
 /* Scrollbar */
 ::-webkit-scrollbar       { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { @apply rounded-full bg-slate-700; }
-::-webkit-scrollbar-thumb:hover { @apply bg-slate-600; }
+::-webkit-scrollbar-thumb { @apply rounded-full bg-neutral-300; }
+::-webkit-scrollbar-thumb:hover { @apply bg-neutral-400; }
 
 .chat-scroll { scrollbar-gutter: stable; }

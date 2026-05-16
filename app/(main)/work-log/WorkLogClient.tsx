@@ -11,10 +11,10 @@ const WORK_TYPES: WorkType[] = ['on-campus', 'CPT', 'OPT', 'STEM OPT'];
 const ON_CAMPUS_LIMIT = 20;
 
 const WORK_TYPE_STYLE: Record<WorkType, string> = {
-  'on-campus': 'bg-violet-400/10 text-violet-400 border-violet-400/20',
-  'CPT':       'bg-cyan-400/10 text-cyan-400 border-cyan-400/20',
-  'OPT':       'bg-emerald-400/10 text-emerald-400 border-emerald-400/20',
-  'STEM OPT':  'bg-amber-400/10 text-amber-400 border-amber-400/20',
+  'on-campus': 'bg-black/5 text-neutral-900 border-black/10',
+  'CPT':       'bg-neutral-100 text-neutral-600 border-neutral-200',
+  'OPT':       'bg-neutral-900 text-white border-transparent',
+  'STEM OPT':  'bg-neutral-200 text-neutral-700 border-neutral-300',
 };
 
 export default function WorkLogClient({ initialLogs, userId }: { initialLogs: WorkLog[]; userId: string }) {
@@ -47,10 +47,14 @@ export default function WorkLogClient({ initialLogs, userId }: { initialLogs: Wo
     const { data, error: err } = await supabase
       .from('work_logs')
       .upsert(
-        { user_id: userId, week_start: weekStart, hours_worked: Number(hours), employer: employer || null, work_type: workType, notes: notes || null },
+        {
+          user_id: userId, week_start: weekStart, hours_worked: Number(hours),
+          employer: employer || null, work_type: workType, notes: notes || null,
+        },
         { onConflict: 'user_id,week_start' }
       )
-      .select().single();
+      .select()
+      .single();
 
     if (err) { setError(err.message); }
     else if (data) {
@@ -74,12 +78,12 @@ export default function WorkLogClient({ initialLogs, userId }: { initialLogs: Wo
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-lg font-bold text-slate-100">
+          <h1 className="text-lg font-black text-neutral-900">
             Work <span className="neon-text">Log</span>
           </h1>
-          <p className="text-xs text-slate-600">Track weekly hours for F-1 compliance</p>
+          <p className="text-xs text-neutral-400 font-semibold">Track weekly hours for F-1 compliance</p>
         </div>
-        <button onClick={() => setShowForm((v) => !v)} className="btn-primary text-xs px-3 py-1.5">
+        <button onClick={() => setShowForm((v) => !v)} className="btn-primary text-xs px-4 py-2">
           <Plus className="h-3.5 w-3.5" />
           Log Hours
         </button>
@@ -87,41 +91,46 @@ export default function WorkLogClient({ initialLogs, userId }: { initialLogs: Wo
 
       {/* This week summary card */}
       <div className={cn(
-        'card p-5 border',
-        isOverLimit ? 'border-pink-500/30 bg-pink-500/5' : 'border-violet-500/20 bg-violet-500/5'
+        'rounded-2xl border p-5',
+        isOverLimit
+          ? 'border-black/20 bg-black/5'
+          : 'border-neutral-200 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.05)]'
       )}>
         <div className="flex items-center gap-4 mb-3">
           <div className={cn(
-            'flex h-11 w-11 items-center justify-center rounded-xl',
-            isOverLimit ? 'bg-pink-500/15' : 'bg-violet-500/15'
+            'flex h-11 w-11 items-center justify-center rounded-2xl',
+            isOverLimit ? 'bg-neutral-900' : 'bg-neutral-100'
           )}>
-            <Clock className={cn('h-5 w-5', isOverLimit ? 'text-pink-400' : 'text-violet-400')} />
+            <Clock className={cn('h-5 w-5', isOverLimit ? 'text-white' : 'text-neutral-600')} />
           </div>
           <div>
-            <p className="text-xs text-slate-500 uppercase tracking-wider">This Week · On-Campus</p>
-            <p className={cn('text-2xl font-bold tabular-nums', isOverLimit ? 'text-pink-400' : 'text-violet-300')}>
+            <p className="text-xs text-neutral-400 font-black uppercase tracking-wider">
+              This Week · On-Campus
+            </p>
+            <p className={cn(
+              'text-2xl font-black tabular-nums',
+              isOverLimit ? 'text-neutral-900' : 'text-neutral-800'
+            )}>
               {currentWeekHours.toFixed(1)}
-              <span className="text-sm font-normal text-slate-600 ml-1">/ {ON_CAMPUS_LIMIT} hrs</span>
+              <span className="text-sm font-semibold text-neutral-400 ml-1">/ {ON_CAMPUS_LIMIT} hrs</span>
             </p>
           </div>
           {isOverLimit && (
-            <div className="ml-auto flex items-center gap-1.5 rounded-lg bg-pink-500/10 border border-pink-500/20 px-3 py-1.5">
-              <AlertTriangle className="h-3.5 w-3.5 text-pink-400" />
-              <p className="text-xs font-medium text-pink-400">Over 20hr limit</p>
+            <div className="ml-auto flex items-center gap-1.5 rounded-full bg-neutral-900 px-3 py-1.5">
+              <AlertTriangle className="h-3.5 w-3.5 text-white" />
+              <p className="text-xs font-black text-white">Over 20hr limit</p>
             </div>
           )}
         </div>
 
         {/* Progress bar */}
-        <div className="h-1.5 rounded-full bg-slate-800 overflow-hidden">
+        <div className="h-2 rounded-full bg-neutral-200 overflow-hidden">
           <div
             className={cn(
               'h-full rounded-full transition-all duration-500',
-              isOverLimit
-                ? 'bg-pink-500 shadow-[0_0_8px_rgba(244,114,182,0.5)]'
-                : pct > 75
-                ? 'bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.4)]'
-                : 'bg-violet-500 shadow-[0_0_8px_rgba(139,92,246,0.4)]'
+              isOverLimit ? 'bg-neutral-900' :
+              pct > 75   ? 'bg-neutral-700' :
+                           'bg-neutral-500'
             )}
             style={{ width: `${pct}%` }}
           />
@@ -130,37 +139,73 @@ export default function WorkLogClient({ initialLogs, userId }: { initialLogs: Wo
 
       {/* Add form */}
       {showForm && (
-        <form onSubmit={handleAdd} className="card p-5 space-y-4 border border-slate-700">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-500">Log Hours</h2>
+        <form onSubmit={handleAdd} className="card p-5 space-y-4">
+          <h2 className="text-xs font-black uppercase tracking-wider text-neutral-400">Log Hours</h2>
           {error && (
-            <p className="rounded-lg bg-pink-500/10 border border-pink-500/20 px-3 py-2 text-sm text-pink-400">{error}</p>
+            <p className="rounded-xl bg-neutral-900/5 border border-neutral-900/15 px-3 py-2 text-sm font-semibold text-neutral-900">
+              {error}
+            </p>
           )}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="mb-1 block text-xs text-slate-600">Week (Monday)</label>
-              <input type="date" className="input" value={weekStart} onChange={(e) => setWeekStart(e.target.value)} required />
+              <label className="mb-1 block text-xs font-bold text-neutral-400">Week (Monday)</label>
+              <input
+                type="date"
+                className="input"
+                value={weekStart}
+                onChange={(e) => setWeekStart(e.target.value)}
+                required
+              />
             </div>
             <div>
-              <label className="mb-1 block text-xs text-slate-600">Hours Worked</label>
-              <input type="number" className="input" placeholder="e.g. 18.5" step="0.5" min="0" max="168" value={hours} onChange={(e) => setHours(e.target.value)} required />
+              <label className="mb-1 block text-xs font-bold text-neutral-400">Hours Worked</label>
+              <input
+                type="number"
+                className="input"
+                placeholder="e.g. 18.5"
+                step="0.5"
+                min="0"
+                max="168"
+                value={hours}
+                onChange={(e) => setHours(e.target.value)}
+                required
+              />
             </div>
             <div>
-              <label className="mb-1 block text-xs text-slate-600">Work Type</label>
-              <select className="input" value={workType} onChange={(e) => setWorkType(e.target.value as WorkType)}>
+              <label className="mb-1 block text-xs font-bold text-neutral-400">Work Type</label>
+              <select
+                className="input"
+                value={workType}
+                onChange={(e) => setWorkType(e.target.value as WorkType)}
+              >
                 {WORK_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
               </select>
             </div>
             <div>
-              <label className="mb-1 block text-xs text-slate-600">Employer (optional)</label>
-              <input type="text" className="input" placeholder="e.g. University Library" value={employer} onChange={(e) => setEmployer(e.target.value)} />
+              <label className="mb-1 block text-xs font-bold text-neutral-400">Employer (optional)</label>
+              <input
+                type="text"
+                className="input"
+                placeholder="e.g. University Library"
+                value={employer}
+                onChange={(e) => setEmployer(e.target.value)}
+              />
             </div>
           </div>
           <div>
-            <label className="mb-1 block text-xs text-slate-600">Notes (optional)</label>
-            <input type="text" className="input" placeholder="Any notes…" value={notes} onChange={(e) => setNotes(e.target.value)} />
+            <label className="mb-1 block text-xs font-bold text-neutral-400">Notes (optional)</label>
+            <input
+              type="text"
+              className="input"
+              placeholder="Any notes…"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+            />
           </div>
           <div className="flex justify-end gap-2">
-            <button type="button" onClick={() => setShowForm(false)} className="btn-secondary">Cancel</button>
+            <button type="button" onClick={() => setShowForm(false)} className="btn-secondary">
+              Cancel
+            </button>
             <button type="submit" disabled={saving} className="btn-primary">
               {saving && <Loader2 className="h-4 w-4 animate-spin" />}
               Save
@@ -173,35 +218,50 @@ export default function WorkLogClient({ initialLogs, userId }: { initialLogs: Wo
       <div className="space-y-2">
         {logs.length === 0 ? (
           <div className="py-20 text-center">
-            <TrendingUp className="mx-auto mb-3 h-8 w-8 text-slate-700" />
-            <p className="text-sm text-slate-600">No hours logged yet.</p>
-            <p className="text-xs text-slate-700 mt-1">Start tracking to stay compliant.</p>
+            <TrendingUp className="mx-auto mb-3 h-8 w-8 text-neutral-300" />
+            <p className="text-sm font-bold text-neutral-500">No hours logged yet.</p>
+            <p className="text-xs text-neutral-400 font-medium mt-1">Start tracking to stay compliant.</p>
           </div>
         ) : (
           logs.map((log) => {
             const over = log.work_type === 'on-campus' && Number(log.hours_worked) > ON_CAMPUS_LIMIT;
             return (
-              <div key={log.id} className="card flex items-center gap-4 px-4 py-3 hover:border-slate-700 transition-colors">
+              <div
+                key={log.id}
+                className="card flex items-center gap-4 px-4 py-3 hover:border-neutral-300 transition-colors"
+              >
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-sm font-medium text-slate-200">
+                    <span className="text-sm font-black text-neutral-800">
                       Week of {format(parseISO(log.week_start), 'MMM d, yyyy')}
                     </span>
                     <span className={cn('badge text-[10px]', WORK_TYPE_STYLE[log.work_type])}>
                       {log.work_type}
                     </span>
-                    {over && <span className="badge text-[10px] bg-pink-500/10 text-pink-400 border-pink-500/20">Over limit</span>}
+                    {over && (
+                      <span className="badge text-[10px] bg-neutral-900 text-white border-transparent">
+                        Over limit
+                      </span>
+                    )}
                   </div>
-                  {log.employer && <p className="text-xs text-slate-600 mt-0.5">{log.employer}</p>}
-                  {log.notes    && <p className="text-xs text-slate-700 italic mt-0.5">{log.notes}</p>}
+                  {log.employer && (
+                    <p className="text-xs text-neutral-500 font-medium mt-0.5">{log.employer}</p>
+                  )}
+                  {log.notes && (
+                    <p className="text-xs text-neutral-400 italic font-medium mt-0.5">{log.notes}</p>
+                  )}
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className={cn('text-lg font-bold tabular-nums', over ? 'text-pink-400' : 'text-slate-300')}>
-                    {Number(log.hours_worked).toFixed(1)}<span className="text-xs font-normal text-slate-600 ml-0.5">h</span>
+                  <span className={cn(
+                    'text-lg font-black tabular-nums',
+                    over ? 'text-neutral-900' : 'text-neutral-700'
+                  )}>
+                    {Number(log.hours_worked).toFixed(1)}
+                    <span className="text-xs font-semibold text-neutral-400 ml-0.5">h</span>
                   </span>
                   <button
                     onClick={() => handleDelete(log.id)}
-                    className="rounded-md p-1.5 text-slate-700 hover:bg-pink-500/10 hover:text-pink-400 transition-colors"
+                    className="rounded-full p-1.5 text-neutral-300 hover:bg-neutral-100 hover:text-neutral-700 transition-colors"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                   </button>

@@ -7,20 +7,20 @@ import {
   Receipt,
   ClipboardList,
   BookOpen,
-  Settings,
   GraduationCap,
-  LogIn,
   Sparkles,
   UserCircle,
+  CalendarClock,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const NAV_ITEMS = [
-  { href: '/dashboard', label: 'Dashboard',  icon: LayoutDashboard },
-  { href: '/taxes',     label: 'Tax Hub',    icon: Receipt },
-  { href: '/work-log',  label: 'Work Log',   icon: ClipboardList },
-  { href: '/resources', label: 'Resources',  icon: BookOpen },
-  { href: '/profile',   label: 'My Profile', icon: UserCircle },
+  { href: '/dashboard',   label: 'Dashboard',  icon: LayoutDashboard },
+  { href: '/taxes',       label: 'Tax Hub',    icon: Receipt },
+  { href: '/work-log',    label: 'Work Log',   icon: ClipboardList },
+  { href: '/opt-tracker', label: 'OPT Tracker', icon: CalendarClock },
+  { href: '/resources',  label: 'Resources',  icon: BookOpen },
+  { href: '/profile',    label: 'My Profile', icon: UserCircle },
 ];
 
 export default function Sidebar() {
@@ -65,17 +65,8 @@ export default function Sidebar() {
 
       {/* Footer */}
       <div className="space-y-1 border-t border-neutral-100 pt-4">
-        <Link href="/settings" className="nav-link">
-          <Settings className="h-4 w-4" />
-          Settings
-        </Link>
-        <Link href="/auth/login" className="nav-link">
-          <LogIn className="h-4 w-4" />
-          Sign In / Sign Up
-        </Link>
-
         {/* Tagline */}
-        <div className="mt-3 mx-1 rounded-2xl bg-neutral-100 border border-neutral-200 px-3 py-3">
+        <div className="mx-1 rounded-2xl bg-neutral-100 border border-neutral-200 px-3 py-3">
           <div className="flex items-center gap-1.5 mb-1">
             <Sparkles className="h-3 w-3 text-neutral-500" />
             <span className="text-[10px] font-black text-neutral-600 uppercase tracking-wider">

@@ -12,7 +12,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
 
       {/* Main content */}
       <div className="ml-64 mr-80 flex-1">
-        <main className="px-8 py-8">{children}</main>
+        <main className="mx-auto max-w-3xl px-8 py-8">{children}</main>
       </div>
 
       {/* Right sidebar */}

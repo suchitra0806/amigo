@@ -16,7 +16,7 @@ export default function RightSidebar() {
       <section>
         <div className="mb-3 flex items-center gap-2">
           <CalendarClock className="h-4 w-4 text-neutral-500" />
-          <h2 className="text-xs font-black uppercase tracking-wider text-neutral-500">
+          <h2 className="text-xs font-black uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
             Upcoming Deadlines
           </h2>
           <Link
@@ -74,9 +74,9 @@ export default function RightSidebar() {
       </section>
 
       {/* Disclaimer */}
-      <div className="rounded-2xl border border-neutral-200 bg-neutral-50 px-3 py-2.5">
-        <p className="text-[10px] leading-snug text-neutral-500 font-medium">
-          <span className="font-bold text-neutral-700">Not Financial or Legal Advice.</span>{' '}
+      <div className="rounded-2xl border border-neutral-200 bg-neutral-50 px-3 py-2.5 dark:border-neutral-800 dark:bg-neutral-800/50">
+        <p className="text-[10px] leading-snug text-neutral-500 font-medium dark:text-neutral-400">
+          <span className="font-bold text-neutral-700 dark:text-neutral-300">Not Financial or Legal Advice.</span>{' '}
           For educational purposes only. Consult your DSO or a licensed professional.
         </p>
       </div>

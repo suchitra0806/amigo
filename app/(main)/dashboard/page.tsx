@@ -100,8 +100,6 @@ export default function DashboardPage() {
     .filter((l) => l.work_type === 'on-campus' && l.week_start === thisMonday)
     .reduce((sum, l) => sum + Number(l.hours_worked), 0);
 
-  const hour = new Date().getHours();
-  const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
   const firstName = profile?.full_name?.split(' ')[0] || 'there';
   const isProfileComplete = !!(profile?.university && profile?.graduation_year);
 
@@ -112,12 +110,10 @@ export default function DashboardPage() {
     <div className="space-y-6">
       {/* Welcome */}
       <div>
-        <h1 className="text-2xl font-black text-neutral-900">
-          {greeting},{' '}
-          <span className="neon-text">{firstName}</span>{' '}
-          <span className="text-2xl">👋</span>
+        <h1 className="text-2xl font-black text-neutral-900 dark:text-neutral-100">
+          Hello, <span className="neon-text">{firstName}</span> :)
         </h1>
-        <p className="mt-0.5 text-sm text-neutral-500 font-semibold">
+        <p className="mt-0.5 text-sm text-neutral-500 font-semibold dark:text-neutral-400">
           {profile?.university ? `${profile.university} · ` : ''}
           {profile?.visa_status ?? 'F-1'} Student Portal
         </p>
@@ -127,16 +123,16 @@ export default function DashboardPage() {
       {!isProfileComplete && (
         <Link
           href="/profile"
-          className="flex items-center gap-3 rounded-2xl border-2 border-dashed border-neutral-300 bg-neutral-50 px-4 py-3 transition-all hover:border-neutral-900 hover:bg-neutral-100"
+          className="flex items-center gap-3 rounded-2xl border-2 border-dashed border-neutral-300 bg-neutral-50 px-4 py-3 transition-all hover:border-neutral-900 hover:bg-neutral-100 dark:border-neutral-700 dark:bg-neutral-800/50 dark:hover:border-neutral-500 dark:hover:bg-neutral-800"
         >
-          <AlertCircle className="h-4 w-4 flex-shrink-0 text-neutral-500" />
+          <AlertCircle className="h-4 w-4 flex-shrink-0 text-neutral-500 dark:text-neutral-400" />
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-bold text-neutral-800">Complete your profile</p>
-            <p className="text-xs text-neutral-500 font-medium">
+            <p className="text-sm font-bold text-neutral-800 dark:text-neutral-200">Complete your profile</p>
+            <p className="text-xs text-neutral-500 font-medium dark:text-neutral-400">
               Add your university and program details
             </p>
           </div>
-          <ChevronRight className="h-4 w-4 flex-shrink-0 text-neutral-400" />
+          <ChevronRight className="h-4 w-4 flex-shrink-0 text-neutral-400 dark:text-neutral-500" />
         </Link>
       )}
 
@@ -166,13 +162,13 @@ export default function DashboardPage() {
       {/* My Notes */}
       <section>
         <div className="mb-3 flex items-center gap-2">
-          <StickyNote className="h-4 w-4 text-neutral-400" />
-          <h2 className="text-xs font-black uppercase tracking-wider text-neutral-500">
+          <StickyNote className="h-4 w-4 text-neutral-400 dark:text-neutral-500" />
+          <h2 className="text-xs font-black uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
             My Notes
           </h2>
           <button
             onClick={() => setShowNoteInput(v => !v)}
-            className="ml-auto flex items-center gap-1 rounded-xl border border-neutral-200 bg-white px-2.5 py-1 text-[11px] font-bold text-neutral-500 hover:border-neutral-400 hover:text-neutral-900 transition-all"
+            className="ml-auto flex items-center gap-1 rounded-xl border border-neutral-200 bg-white px-2.5 py-1 text-[11px] font-bold text-neutral-500 hover:border-neutral-400 hover:text-neutral-900 transition-all dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:border-neutral-500 dark:hover:text-neutral-100"
           >
             <Plus className="h-3 w-3" />
             Add
@@ -195,10 +191,10 @@ export default function DashboardPage() {
         )}
 
         {notes.length === 0 ? (
-          <div className="rounded-2xl border-2 border-dashed border-neutral-200 bg-neutral-50 px-4 py-8 text-center">
-            <StickyNote className="mx-auto mb-2 h-6 w-6 text-neutral-300" />
-            <p className="text-sm font-bold text-neutral-500">No notes yet</p>
-            <p className="mt-1 text-xs text-neutral-400 font-medium">
+          <div className="rounded-2xl border-2 border-dashed border-neutral-200 bg-neutral-50 px-4 py-8 text-center dark:border-neutral-800 dark:bg-neutral-900/50">
+            <StickyNote className="mx-auto mb-2 h-6 w-6 text-neutral-300 dark:text-neutral-600" />
+            <p className="text-sm font-bold text-neutral-500 dark:text-neutral-400">No notes yet</p>
+            <p className="mt-1 text-xs text-neutral-400 font-medium dark:text-neutral-500">
               Jot down reminders, DSO questions, or anything you don't want to forget.
             </p>
           </div>
@@ -206,10 +202,10 @@ export default function DashboardPage() {
           <div className="space-y-2">
             {notes.map(note => (
               <div key={note.id} className="card flex items-start gap-3 p-3.5">
-                <p className="flex-1 text-sm font-medium text-neutral-700 leading-snug">{note.text}</p>
+                <p className="flex-1 text-sm font-medium text-neutral-700 leading-snug dark:text-neutral-300">{note.text}</p>
                 <button
                   onClick={() => deleteNote(note.id)}
-                  className="flex-shrink-0 rounded-lg p-1 text-neutral-300 hover:bg-neutral-100 hover:text-neutral-600 transition-colors"
+                  className="flex-shrink-0 rounded-lg p-1 text-neutral-300 hover:bg-neutral-100 hover:text-neutral-600 transition-colors dark:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-300"
                   aria-label="Delete note"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
@@ -223,7 +219,7 @@ export default function DashboardPage() {
       {/* Quick access */}
       <section>
         <div className="mb-3">
-          <h2 className="text-xs font-black uppercase tracking-wider text-neutral-500">
+          <h2 className="text-xs font-black uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
             Quick Access
           </h2>
         </div>
@@ -238,10 +234,10 @@ export default function DashboardPage() {
                 <Icon className={cn('h-4 w-4', iconColor)} />
               </div>
               <div>
-                <p className="text-sm font-black text-neutral-800 group-hover:text-black transition-colors">
+                <p className="text-sm font-black text-neutral-800 group-hover:text-black transition-colors dark:text-neutral-200 dark:group-hover:text-white">
                   {label}
                 </p>
-                <p className="text-xs text-neutral-500 font-medium mt-0.5">{desc}</p>
+                <p className="text-xs text-neutral-500 font-medium mt-0.5 dark:text-neutral-400">{desc}</p>
               </div>
             </Link>
           ))}
@@ -264,12 +260,12 @@ export default function DashboardPage() {
 
 const VARIANT_MAP = {
   default: {
-    card:   'border-neutral-200 bg-white',
-    iconBg: 'bg-neutral-100',
-    icon:   'text-neutral-700',
-    sub:    'text-neutral-500',
-    value:  'text-neutral-900',
-    label:  'text-neutral-400',
+    card:   'border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900',
+    iconBg: 'bg-neutral-100 dark:bg-neutral-800',
+    icon:   'text-neutral-700 dark:text-neutral-300',
+    sub:    'text-neutral-500 dark:text-neutral-400',
+    value:  'text-neutral-900 dark:text-neutral-100',
+    label:  'text-neutral-400 dark:text-neutral-500',
   },
   inverted: {
     card:   'border-neutral-900 bg-neutral-900',
@@ -280,12 +276,12 @@ const VARIANT_MAP = {
     label:  'text-white/60',
   },
   muted: {
-    card:   'border-neutral-200 bg-neutral-50',
-    iconBg: 'bg-neutral-200',
-    icon:   'text-neutral-400',
-    sub:    'text-neutral-400',
-    value:  'text-neutral-600',
-    label:  'text-neutral-400',
+    card:   'border-neutral-200 bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-900/50',
+    iconBg: 'bg-neutral-200 dark:bg-neutral-800',
+    icon:   'text-neutral-400 dark:text-neutral-500',
+    sub:    'text-neutral-400 dark:text-neutral-500',
+    value:  'text-neutral-600 dark:text-neutral-400',
+    label:  'text-neutral-400 dark:text-neutral-500',
   },
 } as const;
 

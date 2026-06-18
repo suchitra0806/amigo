@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Send, Loader2, GraduationCap, AlertTriangle } from 'lucide-react';
+import { Send, Loader2, GraduationCap, AlertTriangle, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface Message {
@@ -15,7 +15,7 @@ const WELCOME: Message = {
     "Hey! I'm Amigo AI — your F-1 compliance companion.\n\nAsk me about taxes, OPT/CPT, work authorization, FBAR, or anything else on your mind.\n\n⚠️ I'm an AI, not a lawyer or CPA. Always verify with your DSO.",
 };
 
-export default function ChatWidget({ onClose: _onClose }: { onClose: () => void }) {
+export default function ChatWidget({ onClose }: { onClose: () => void }) {
   const [messages, setMessages] = useState<Message[]>([WELCOME]);
   const [input, setInput]       = useState('');
   const [loading, setLoading]   = useState(false);
@@ -61,7 +61,7 @@ export default function ChatWidget({ onClose: _onClose }: { onClose: () => void 
         <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-neutral-900 shadow-chibi">
           <GraduationCap className="h-4 w-4 text-white" />
         </div>
-        <div>
+        <div className="flex-1">
           <p className="text-sm font-black text-neutral-900">
             Amigo <span className="neon-text">AI</span>
           </p>
@@ -70,6 +70,13 @@ export default function ChatWidget({ onClose: _onClose }: { onClose: () => void 
             <p className="text-[10px] text-neutral-400 font-semibold">F-1 student assistant</p>
           </div>
         </div>
+        <button
+          onClick={onClose}
+          aria-label="Close chat"
+          className="flex h-7 w-7 items-center justify-center rounded-xl text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 transition-colors"
+        >
+          <X className="h-4 w-4" />
+        </button>
       </div>
 
       {/* Disclaimer */}

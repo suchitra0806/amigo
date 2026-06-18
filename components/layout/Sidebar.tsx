@@ -13,7 +13,9 @@ import {
   CalendarClock,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import ThemeToggle from '@/components/ThemeToggle';
+import dynamic from 'next/dynamic';
+
+const ThemeToggle = dynamic(() => import('@/components/ThemeToggle'), { ssr: false });
 
 const NAV_ITEMS = [
   { href: '/dashboard',   label: 'Dashboard',  icon: LayoutDashboard },

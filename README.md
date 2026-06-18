@@ -1,6 +1,6 @@
 # Amigo
 
-A compliance and reference hub for F-1 international students in the United States. Amigo helps you track work authorization hours, monitor OPT unemployment days, stay on top of tax and immigration deadlines, and get quick answers via an AI assistant -- all without an account or backend.
+A compliance and reference hub for F-1 international students in the United States. Amigo helps you track work authorization hours, monitor OPT unemployment days, stay on top of tax and immigration deadlines, and get quick answers via an AI assistant, all without an account or backend.
 
 ## What it does
 

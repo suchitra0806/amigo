@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import ThemeProvider from '@/components/ThemeProvider';
 
 export const metadata: Metadata = {
   title: { default: 'Amigo', template: '%s | Amigo' },
@@ -11,7 +10,11 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body><ThemeProvider>{children}</ThemeProvider></body>
+      <head>
+        {/* Runs before React hydrates — sets dark class with no flash */}
+        <script dangerouslySetInnerHTML={{ __html: `try{if(localStorage.getItem('amigo_theme')==='dark')document.documentElement.classList.add('dark')}catch(e){}` }} />
+      </head>
+      <body>{children}</body>
     </html>
   );
 }

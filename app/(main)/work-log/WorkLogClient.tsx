@@ -1,14 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { format, parseISO, startOfWeek } from 'date-fns';
-import { Plus, Clock, AlertTriangle, Trash2, Loader2, TrendingUp } from 'lucide-react';
+import { Plus, Clock, AlertTriangle, Trash2, TrendingUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { createClient } from '@/lib/supabase/client';
-import type { WorkLog, WorkType } from '@/types/database';
+import type { WorkType } from '@/types/database';
 
 const WORK_TYPES: WorkType[] = ['on-campus', 'CPT', 'OPT', 'STEM OPT'];
 const ON_CAMPUS_LIMIT = 20;
+const STORAGE_KEY = 'amigo_work_logs';
 
 const WORK_TYPE_STYLE: Record<WorkType, string> = {
   'on-campus': 'bg-black/5 text-neutral-900 border-black/10',
@@ -17,11 +17,32 @@ const WORK_TYPE_STYLE: Record<WorkType, string> = {
   'STEM OPT':  'bg-neutral-200 text-neutral-700 border-neutral-300',
 };
 
-export default function WorkLogClient({ initialLogs, userId }: { initialLogs: WorkLog[]; userId: string }) {
-  const [logs, setLogs]         = useState<WorkLog[]>(initialLogs);
+type LocalLog = {
+  id: string;
+  week_start: string;
+  hours_worked: number;
+  work_type: WorkType;
+  employer: string | null;
+  notes: string | null;
+  created_at: string;
+};
+
+function loadLogs(): LocalLog[] {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveLogs(logs: LocalLog[]) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
+}
+
+export default function WorkLogClient() {
+  const [logs, setLogs]         = useState<LocalLog[]>([]);
   const [showForm, setShowForm] = useState(false);
-  const [saving, setSaving]     = useState(false);
-  const [error, setError]       = useState('');
 
   const thisMonday = format(startOfWeek(new Date(), { weekStartsOn: 1 }), 'yyyy-MM-dd');
   const [weekStart, setWeekStart] = useState(thisMonday);
@@ -30,7 +51,9 @@ export default function WorkLogClient({ initialLogs, userId }: { initialLogs: Wo
   const [workType, setWorkType]   = useState<WorkType>('on-campus');
   const [notes, setNotes]         = useState('');
 
-  const supabase = createClient();
+  useEffect(() => {
+    setLogs(loadLogs());
+  }, []);
 
   const currentWeekHours = logs
     .filter((l) => l.week_start === thisMonday && l.work_type === 'on-campus')
@@ -39,38 +62,38 @@ export default function WorkLogClient({ initialLogs, userId }: { initialLogs: Wo
   const pct         = Math.min((currentWeekHours / ON_CAMPUS_LIMIT) * 100, 100);
   const isOverLimit = currentWeekHours > ON_CAMPUS_LIMIT;
 
-  async function handleAdd(e: React.FormEvent) {
+  function handleAdd(e: React.FormEvent) {
     e.preventDefault();
     if (!hours || Number(hours) <= 0) return;
-    setSaving(true); setError('');
 
-    const { data, error: err } = await supabase
-      .from('work_logs')
-      .upsert(
-        {
-          user_id: userId, week_start: weekStart, hours_worked: Number(hours),
-          employer: employer || null, work_type: workType, notes: notes || null,
-        },
-        { onConflict: 'user_id,week_start' }
-      )
-      .select()
-      .single();
+    const newLog: LocalLog = {
+      id:           crypto.randomUUID(),
+      week_start:   weekStart,
+      hours_worked: Number(hours),
+      work_type:    workType,
+      employer:     employer.trim() || null,
+      notes:        notes.trim() || null,
+      created_at:   new Date().toISOString(),
+    };
 
-    if (err) { setError(err.message); }
-    else if (data) {
-      setLogs((prev) =>
-        [data, ...prev.filter((l) => l.week_start !== weekStart)].sort(
-          (a, b) => new Date(b.week_start).getTime() - new Date(a.week_start).getTime()
-        )
-      );
-      setShowForm(false); setHours(''); setEmployer(''); setNotes('');
-    }
-    setSaving(false);
+    // one entry per week_start (same upsert behavior as before)
+    const updated = [
+      newLog,
+      ...logs.filter((l) => l.week_start !== weekStart),
+    ].sort((a, b) => new Date(b.week_start).getTime() - new Date(a.week_start).getTime());
+
+    setLogs(updated);
+    saveLogs(updated);
+    setShowForm(false);
+    setHours('');
+    setEmployer('');
+    setNotes('');
   }
 
-  async function handleDelete(id: string) {
-    await supabase.from('work_logs').delete().eq('id', id);
-    setLogs((prev) => prev.filter((l) => l.id !== id));
+  function handleDelete(id: string) {
+    const updated = logs.filter((l) => l.id !== id);
+    setLogs(updated);
+    saveLogs(updated);
   }
 
   return (
@@ -123,7 +146,6 @@ export default function WorkLogClient({ initialLogs, userId }: { initialLogs: Wo
           )}
         </div>
 
-        {/* Progress bar */}
         <div className="h-2 rounded-full bg-neutral-200 overflow-hidden">
           <div
             className={cn(
@@ -141,11 +163,6 @@ export default function WorkLogClient({ initialLogs, userId }: { initialLogs: Wo
       {showForm && (
         <form onSubmit={handleAdd} className="card p-5 space-y-4">
           <h2 className="text-xs font-black uppercase tracking-wider text-neutral-400">Log Hours</h2>
-          {error && (
-            <p className="rounded-xl bg-neutral-900/5 border border-neutral-900/15 px-3 py-2 text-sm font-semibold text-neutral-900">
-              {error}
-            </p>
-          )}
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="mb-1 block text-xs font-bold text-neutral-400">Week (Monday)</label>
@@ -206,8 +223,7 @@ export default function WorkLogClient({ initialLogs, userId }: { initialLogs: Wo
             <button type="button" onClick={() => setShowForm(false)} className="btn-secondary">
               Cancel
             </button>
-            <button type="submit" disabled={saving} className="btn-primary">
-              {saving && <Loader2 className="h-4 w-4 animate-spin" />}
+            <button type="submit" className="btn-primary">
               Save
             </button>
           </div>

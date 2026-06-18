@@ -1,70 +1,59 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Loader2, Save, CheckCircle } from 'lucide-react';
-import { createClient } from '@/lib/supabase/client';
-import type { Profile, VisaStatus } from '@/types/database';
+import { useState, useEffect } from 'react';
+import { Save, CheckCircle } from 'lucide-react';
+import type { VisaStatus } from '@/types/database';
 
 const VISA_STATUSES: VisaStatus[] = ['F-1', 'OPT', 'STEM OPT', 'Other'];
 const GRAD_YEARS = Array.from({ length: 11 }, (_, i) => 2025 + i);
 
-export default function ProfileForm({
-  profile,
-  userId,
-}: {
-  profile: Profile | null;
-  userId: string;
-}) {
-  const [fullName, setFullName]       = useState(profile?.full_name ?? '');
-  const [university, setUniversity]   = useState(profile?.university ?? '');
-  const [gradYear, setGradYear]       = useState(profile?.graduation_year ? String(profile.graduation_year) : '');
-  const [visaStatus, setVisaStatus]   = useState<VisaStatus>(profile?.visa_status ?? 'F-1');
-  const [saving, setSaving]           = useState(false);
+type StoredProfile = {
+  full_name: string;
+  university: string;
+  graduation_year: string;
+  visa_status: VisaStatus;
+};
+
+const STORAGE_KEY = 'amigo_profile';
+
+export default function ProfileForm() {
+  const [fullName, setFullName]       = useState('');
+  const [university, setUniversity]   = useState('');
+  const [gradYear, setGradYear]       = useState('');
+  const [visaStatus, setVisaStatus]   = useState<VisaStatus>('F-1');
   const [saved, setSaved]             = useState(false);
-  const [error, setError]             = useState('');
 
-  const router   = useRouter();
-  const supabase = createClient();
+  useEffect(() => {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const p: StoredProfile = JSON.parse(raw);
+    setFullName(p.full_name ?? '');
+    setUniversity(p.university ?? '');
+    setGradYear(p.graduation_year ?? '');
+    setVisaStatus(p.visa_status ?? 'F-1');
+  }, []);
 
-  async function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setSaving(true); setError(''); setSaved(false);
-
-    const { error: err } = await supabase
-      .from('profiles')
-      .update({
-        full_name:       fullName.trim(),
-        university:      university.trim() || null,
-        graduation_year: gradYear ? Number(gradYear) : null,
-        visa_status:     visaStatus,
-      })
-      .eq('id', userId);
-
-    if (err) {
-      setError(err.message);
-    } else {
-      setSaved(true);
-      router.refresh();
-      setTimeout(() => setSaved(false), 3000);
-    }
-    setSaving(false);
+    const profile: StoredProfile = {
+      full_name: fullName.trim(),
+      university: university.trim(),
+      graduation_year: gradYear,
+      visa_status: visaStatus,
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(profile));
+    setSaved(true);
+    setTimeout(() => setSaved(false), 3000);
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {error && (
-        <p className="rounded-xl border border-neutral-900/15 bg-neutral-900/5 px-3 py-2 text-sm font-semibold text-neutral-900">
-          {error}
-        </p>
-      )}
-
-      <div className="card border border-slate-800 p-5 space-y-4">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+      <div className="card border border-neutral-200 p-5 space-y-4">
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-neutral-500">
           Personal Info
         </h2>
         <div>
-          <label className="mb-1.5 block text-xs uppercase tracking-wider text-slate-500">
+          <label className="mb-1.5 block text-xs uppercase tracking-wider text-neutral-500">
             Full Name
           </label>
           <input
@@ -77,12 +66,12 @@ export default function ProfileForm({
         </div>
       </div>
 
-      <div className="card border border-slate-800 p-5 space-y-4">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+      <div className="card border border-neutral-200 p-5 space-y-4">
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-neutral-500">
           Academic Details
         </h2>
         <div>
-          <label className="mb-1.5 block text-xs uppercase tracking-wider text-slate-500">
+          <label className="mb-1.5 block text-xs uppercase tracking-wider text-neutral-500">
             University
           </label>
           <input
@@ -95,7 +84,7 @@ export default function ProfileForm({
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="mb-1.5 block text-xs uppercase tracking-wider text-slate-500">
+            <label className="mb-1.5 block text-xs uppercase tracking-wider text-neutral-500">
               Expected Grad Year
             </label>
             <select
@@ -105,14 +94,12 @@ export default function ProfileForm({
             >
               <option value="">Select year</option>
               {GRAD_YEARS.map((y) => (
-                <option key={y} value={y}>
-                  {y}
-                </option>
+                <option key={y} value={y}>{y}</option>
               ))}
             </select>
           </div>
           <div>
-            <label className="mb-1.5 block text-xs uppercase tracking-wider text-slate-500">
+            <label className="mb-1.5 block text-xs uppercase tracking-wider text-neutral-500">
               Visa Status
             </label>
             <select
@@ -121,9 +108,7 @@ export default function ProfileForm({
               onChange={(e) => setVisaStatus(e.target.value as VisaStatus)}
             >
               {VISA_STATUSES.map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
+                <option key={s} value={s}>{s}</option>
               ))}
             </select>
           </div>
@@ -137,12 +122,8 @@ export default function ProfileForm({
             Saved!
           </span>
         )}
-        <button type="submit" disabled={saving} className="btn-primary">
-          {saving ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <Save className="h-4 w-4" />
-          )}
+        <button type="submit" className="btn-primary">
+          <Save className="h-4 w-4" />
           Save Profile
         </button>
       </div>

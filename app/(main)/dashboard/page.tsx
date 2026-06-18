@@ -1,17 +1,29 @@
-import type { Metadata } from 'next';
+'use client';
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { format, startOfWeek } from 'date-fns';
-import { createClient } from '@/lib/supabase/server';
 import {
   GraduationCap, ShieldCheck, Clock, CalendarDays,
   Receipt, ClipboardList, BookOpen, MessageCircle,
   Bell, ChevronRight, AlertCircle,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import type { VisaStatus } from '@/types/database';
 
-export const metadata: Metadata = { title: 'Dashboard — Amigo' };
+type StoredProfile = {
+  full_name: string;
+  university: string;
+  graduation_year: string;
+  visa_status: VisaStatus;
+};
 
-export const revalidate = 0;
+type LocalLog = {
+  id: string;
+  week_start: string;
+  hours_worked: number;
+  work_type: string;
+};
 
 const QUICK_ACTIONS = [
   {
@@ -40,54 +52,30 @@ const QUICK_ACTIONS = [
   },
 ];
 
-export default async function DashboardPage() {
-  const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+export default function DashboardPage() {
+  const [profile, setProfile] = useState<StoredProfile | null>(null);
+  const [workLogs, setWorkLogs] = useState<LocalLog[]>([]);
 
-  if (!user) {
-    return (
-      <div className="py-20 text-center">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-3xl bg-neutral-900 shadow-chibi">
-          <GraduationCap className="h-8 w-8 text-white" />
-        </div>
-        <h2 className="text-lg font-black text-neutral-900">Sign in to access your portal</h2>
-        <p className="mt-1 text-sm text-neutral-500 font-medium">
-          Your personalized F-1 student dashboard is waiting.
-        </p>
-        <Link href="/auth/login" className="btn-primary mt-6 inline-flex">
-          Sign In
-        </Link>
-      </div>
-    );
-  }
+  useEffect(() => {
+    const rawProfile = localStorage.getItem('amigo_profile');
+    if (rawProfile) setProfile(JSON.parse(rawProfile));
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', user.id)
-    .single();
+    const rawLogs = localStorage.getItem('amigo_work_logs');
+    if (rawLogs) setWorkLogs(JSON.parse(rawLogs));
+  }, []);
 
   const thisMonday = format(startOfWeek(new Date(), { weekStartsOn: 1 }), 'yyyy-MM-dd');
-  const { data: weekLogs } = await supabase
-    .from('work_logs')
-    .select('hours_worked, work_type')
-    .eq('user_id', user.id)
-    .eq('week_start', thisMonday);
-
-  const onCampusHours = (weekLogs ?? [])
-    .filter((l) => l.work_type === 'on-campus')
+  const onCampusHours = workLogs
+    .filter((l) => l.work_type === 'on-campus' && l.week_start === thisMonday)
     .reduce((sum, l) => sum + Number(l.hours_worked), 0);
 
   const hour = new Date().getHours();
-  const greeting =
-    hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+  const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
   const firstName = profile?.full_name?.split(' ')[0] || 'there';
   const isProfileComplete = !!(profile?.university && profile?.graduation_year);
 
-  const hoursColor: 'urgent' | 'warn' | 'ok' =
-    onCampusHours > 20 ? 'urgent' : onCampusHours > 15 ? 'warn' : 'ok';
+  const hoursVariant: 'urgent' | 'default' =
+    onCampusHours > 20 ? 'urgent' : 'default';
 
   return (
     <div className="space-y-6">
@@ -133,13 +121,13 @@ export default async function DashboardPage() {
           icon={Clock}
           label="This Week"
           value={`${onCampusHours.toFixed(1)} / 20 hrs`}
-          variant={hoursColor === 'urgent' ? 'inverted' : 'default'}
+          variant={hoursVariant === 'urgent' ? 'inverted' : 'default'}
           sub={onCampusHours > 20 ? 'Over limit!' : 'on-campus'}
         />
         <StatusCard
           icon={CalendarDays}
           label="Grad Year"
-          value={profile?.graduation_year ? String(profile.graduation_year) : '—'}
+          value={profile?.graduation_year || '—'}
           variant="muted"
         />
       </div>
@@ -211,7 +199,7 @@ export default async function DashboardPage() {
 }
 
 const VARIANT_MAP = {
-  default:  {
+  default: {
     card:   'border-neutral-200 bg-white',
     iconBg: 'bg-neutral-100',
     icon:   'text-neutral-700',

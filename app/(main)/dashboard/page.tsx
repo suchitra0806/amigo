@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { format, startOfWeek } from 'date-fns';
 import {
   GraduationCap, ShieldCheck, Clock, CalendarDays,
-  Receipt, ClipboardList, BookOpen, MessageCircle,
+  Receipt, ClipboardList, BookOpen,
   StickyNote, ChevronRight, AlertCircle, Plus, Trash2,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -37,24 +37,24 @@ const QUICK_ACTIONS = [
     icon: Receipt,
     label: 'Tax Hub',
     desc: 'Deadlines & filing guides',
-    iconBg: 'bg-neutral-100',
-    iconColor: 'text-neutral-700',
   },
   {
     href: '/work-log',
     icon: ClipboardList,
     label: 'Work Log',
     desc: 'Track your weekly hours',
-    iconBg: 'bg-neutral-900',
-    iconColor: 'text-white',
   },
   {
     href: '/resources',
     icon: BookOpen,
     label: 'Resources',
     desc: 'Visa, CPT & OPT guides',
-    iconBg: 'bg-neutral-100',
-    iconColor: 'text-neutral-700',
+  },
+  {
+    href: '/opt-tracker',
+    icon: GraduationCap,
+    label: 'OPT Tracker',
+    desc: 'Monitor unemployment days',
   },
 ];
 
@@ -224,14 +224,14 @@ export default function DashboardPage() {
           </h2>
         </div>
         <div className="grid grid-cols-2 gap-3">
-          {QUICK_ACTIONS.map(({ href, icon: Icon, label, desc, iconBg, iconColor }) => (
+          {QUICK_ACTIONS.map(({ href, icon: Icon, label, desc }) => (
             <Link
               key={href}
               href={href}
               className="card group flex items-start gap-3 p-4 hover:border-neutral-300 hover:shadow-chibi transition-all hover:-translate-y-px"
             >
-              <div className={cn('flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl', iconBg)}>
-                <Icon className={cn('h-4 w-4', iconColor)} />
+              <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-neutral-900 dark:bg-white">
+                <Icon className="h-4 w-4 text-white dark:text-neutral-900" />
               </div>
               <div>
                 <p className="text-sm font-black text-neutral-800 group-hover:text-black transition-colors dark:text-neutral-200 dark:group-hover:text-white">
@@ -242,16 +242,6 @@ export default function DashboardPage() {
             </Link>
           ))}
 
-          {/* AI assistant hint */}
-          <div className="card flex items-start gap-3 p-4 opacity-40 cursor-default select-none border-dashed">
-            <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl bg-neutral-100">
-              <MessageCircle className="h-4 w-4 text-neutral-500" />
-            </div>
-            <div>
-              <p className="text-sm font-black text-neutral-600">AI Assistant</p>
-              <p className="text-xs text-neutral-400 font-medium mt-0.5">Click the chat button ↘</p>
-            </div>
-          </div>
         </div>
       </section>
     </div>

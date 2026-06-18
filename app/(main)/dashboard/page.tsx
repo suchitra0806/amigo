@@ -6,7 +6,7 @@ import { format, startOfWeek } from 'date-fns';
 import {
   GraduationCap, ShieldCheck, Clock, CalendarDays,
   Receipt, ClipboardList, BookOpen, MessageCircle,
-  Bell, ChevronRight, AlertCircle,
+  StickyNote, ChevronRight, AlertCircle, Plus, Trash2,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { VisaStatus } from '@/types/database';
@@ -23,6 +23,12 @@ type LocalLog = {
   week_start: string;
   hours_worked: number;
   work_type: string;
+};
+
+type Note = {
+  id: string;
+  text: string;
+  created_at: string;
 };
 
 const QUICK_ACTIONS = [
@@ -53,8 +59,11 @@ const QUICK_ACTIONS = [
 ];
 
 export default function DashboardPage() {
-  const [profile, setProfile] = useState<StoredProfile | null>(null);
+  const [profile, setProfile]   = useState<StoredProfile | null>(null);
   const [workLogs, setWorkLogs] = useState<LocalLog[]>([]);
+  const [notes, setNotes]       = useState<Note[]>([]);
+  const [noteInput, setNoteInput] = useState('');
+  const [showNoteInput, setShowNoteInput] = useState(false);
 
   useEffect(() => {
     const rawProfile = localStorage.getItem('amigo_profile');
@@ -62,7 +71,29 @@ export default function DashboardPage() {
 
     const rawLogs = localStorage.getItem('amigo_work_logs');
     if (rawLogs) setWorkLogs(JSON.parse(rawLogs));
+
+    const rawNotes = localStorage.getItem('amigo_notes');
+    if (rawNotes) setNotes(JSON.parse(rawNotes));
   }, []);
+
+  function addNote() {
+    const text = noteInput.trim();
+    if (!text) return;
+    const updated = [
+      { id: crypto.randomUUID(), text, created_at: new Date().toISOString() },
+      ...notes,
+    ];
+    setNotes(updated);
+    localStorage.setItem('amigo_notes', JSON.stringify(updated));
+    setNoteInput('');
+    setShowNoteInput(false);
+  }
+
+  function deleteNote(id: string) {
+    const updated = notes.filter(n => n.id !== id);
+    setNotes(updated);
+    localStorage.setItem('amigo_notes', JSON.stringify(updated));
+  }
 
   const thisMonday = format(startOfWeek(new Date(), { weekStartsOn: 1 }), 'yyyy-MM-dd');
   const onCampusHours = workLogs
@@ -132,28 +163,61 @@ export default function DashboardPage() {
         />
       </div>
 
-      {/* DSO Announcements */}
+      {/* My Notes */}
       <section>
         <div className="mb-3 flex items-center gap-2">
-          <Bell className="h-4 w-4 text-neutral-400" />
+          <StickyNote className="h-4 w-4 text-neutral-400" />
           <h2 className="text-xs font-black uppercase tracking-wider text-neutral-500">
-            DSO Announcements
+            My Notes
           </h2>
-          {profile?.university && (
-            <span className="ml-1 rounded-full bg-neutral-100 px-2 py-0.5 text-[10px] font-bold text-neutral-500">
-              {profile.university}
-            </span>
-          )}
+          <button
+            onClick={() => setShowNoteInput(v => !v)}
+            className="ml-auto flex items-center gap-1 rounded-xl border border-neutral-200 bg-white px-2.5 py-1 text-[11px] font-bold text-neutral-500 hover:border-neutral-400 hover:text-neutral-900 transition-all"
+          >
+            <Plus className="h-3 w-3" />
+            Add
+          </button>
         </div>
-        <div className="rounded-2xl border-2 border-dashed border-neutral-200 bg-neutral-50 px-4 py-8 text-center">
-          <Bell className="mx-auto mb-2 h-6 w-6 text-neutral-300" />
-          <p className="text-sm font-bold text-neutral-500">No announcements yet</p>
-          <p className="mt-1 text-xs text-neutral-400 font-medium">
-            {profile?.university
-              ? `${profile.university} hasn't posted any updates yet.`
-              : 'Once your university joins Amigo, DSO updates will appear here.'}
-          </p>
-        </div>
+
+        {showNoteInput && (
+          <div className="mb-2 flex gap-2">
+            <input
+              autoFocus
+              type="text"
+              value={noteInput}
+              onChange={e => setNoteInput(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') addNote(); if (e.key === 'Escape') { setShowNoteInput(false); setNoteInput(''); } }}
+              placeholder="e.g. Ask DSO about I-20 renewal…"
+              className="input flex-1 text-sm"
+            />
+            <button onClick={addNote} className="btn-primary text-xs px-3">Save</button>
+          </div>
+        )}
+
+        {notes.length === 0 ? (
+          <div className="rounded-2xl border-2 border-dashed border-neutral-200 bg-neutral-50 px-4 py-8 text-center">
+            <StickyNote className="mx-auto mb-2 h-6 w-6 text-neutral-300" />
+            <p className="text-sm font-bold text-neutral-500">No notes yet</p>
+            <p className="mt-1 text-xs text-neutral-400 font-medium">
+              Jot down reminders, DSO questions, or anything you don't want to forget.
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {notes.map(note => (
+              <div key={note.id} className="card flex items-start gap-3 p-3.5">
+                <p className="flex-1 text-sm font-medium text-neutral-700 leading-snug">{note.text}</p>
+                <button
+                  onClick={() => deleteNote(note.id)}
+                  className="flex-shrink-0 rounded-lg p-1 text-neutral-300 hover:bg-neutral-100 hover:text-neutral-600 transition-colors"
+                  aria-label="Delete note"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Quick access */}

@@ -4,19 +4,19 @@ A compliance and reference hub for F-1 international students in the United Stat
 
 ## What it does
 
-**Dashboard** -- Personalized greeting, visa status, weekly on-campus hours at a glance, personal notes, and quick access to all tools.
+**Dashboard**: Personalized greeting, visa status, weekly on-campus hours at a glance, personal notes, and quick access to all tools.
 
-**Work Log** -- Log hours by week and work type (on-campus, CPT, OPT, STEM OPT). Tracks your 20-hour weekly cap for on-campus employment.
+**Work Log**: Log hours by week and work type (on-campus, CPT, OPT, STEM OPT). Tracks your 20-hour weekly cap for on-campus employment.
 
-**OPT Tracker** -- Track unemployment days against the USCIS cap (90 days for OPT, 150 days for STEM OPT). Add employment periods and the tracker calculates your running count automatically.
+**OPT Tracker**: Track unemployment days against the USCIS cap (90 days for OPT, 150 days for STEM OPT). Add employment periods and the tracker calculates your running count automatically.
 
-**Tax Hub** -- Key 2026 deadlines for F-1 students: W-2 availability, 1040-NR, FBAR, OPT application windows. Includes F-1 tax basics and links to free filing tools like Sprintax and GLACIER.
+**Tax Hub**: Key 2026 deadlines for F-1 students: W-2 availability, 1040-NR, FBAR, OPT application windows. Includes F-1 tax basics and links to free filing tools like Sprintax and GLACIER.
 
-**Resources** -- Curated links to official sources: IRS, USCIS, SEVP, E-Verify, FinCEN, and more.
+**Resources**: Curated links to official sources: IRS, USCIS, SEVP, E-Verify, FinCEN, and more.
 
-**AI Assistant** -- Powered by Gemini 1.5 Flash, trained on F-1 compliance topics including OPT/CPT rules, FICA exemptions, tax treaties, FBAR, and SEVIS requirements.
+**AI Assistant**: Powered by Gemini 1.5 Flash, trained on F-1 compliance topics including OPT/CPT rules, FICA exemptions, tax treaties, FBAR, and SEVIS requirements.
 
-**Profile** -- Store your name, university, graduation year, and visa status locally.
+**Profile**: Store your name, university, graduation year, and visa status locally.
 
 ## Data and privacy
 

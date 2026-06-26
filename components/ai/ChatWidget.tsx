@@ -15,6 +15,14 @@ const WELCOME: Message = {
     "Hey! I'm Amigo AI — your F-1 compliance companion.\n\nAsk me about taxes, OPT/CPT, work authorization, FBAR, or anything else on your mind.\n\n⚠️ I'm an AI, not a lawyer or CPA. Always verify with your DSO.",
 };
 
+const SUGGESTED_QUESTIONS = [
+  "When should I apply for OPT?",
+  "Do I owe FICA taxes on OPT?",
+  "What is the 90-day unemployment cap?",
+  "Can I work part-time on CPT?",
+  "What forms do I need to file taxes?",
+];
+
 export default function ChatWidget({ onClose }: { onClose: () => void }) {
   const [messages, setMessages] = useState<Message[]>([WELCOME]);
   const [input, setInput]       = useState('');
@@ -25,9 +33,10 @@ export default function ChatWidget({ onClose }: { onClose: () => void }) {
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
   useEffect(() => { inputRef.current?.focus(); }, []);
 
-  async function send() {
-    const text = input.trim();
-    if (!text || loading) return;
+  const hasUserMessage = messages.some((m) => m.role === 'user');
+
+  async function sendText(text: string) {
+    if (!text.trim() || loading) return;
 
     const userMsg: Message = { role: 'user', content: text };
     setMessages((p) => [...p, userMsg]);
@@ -49,6 +58,8 @@ export default function ChatWidget({ onClose }: { onClose: () => void }) {
       setLoading(false);
     }
   }
+
+  async function send() { await sendText(input.trim()); }
 
   function onKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
@@ -103,6 +114,20 @@ export default function ChatWidget({ onClose }: { onClose: () => void }) {
             </div>
           </div>
         ))}
+
+        {!hasUserMessage && (
+          <div className="flex flex-wrap gap-2 pt-1">
+            {SUGGESTED_QUESTIONS.map((q) => (
+              <button
+                key={q}
+                onClick={() => sendText(q)}
+                className="rounded-2xl border border-neutral-200 bg-white px-3 py-1.5 text-left text-xs font-semibold text-neutral-600 transition-all hover:border-neutral-400 hover:text-neutral-900 active:scale-95"
+              >
+                {q}
+              </button>
+            ))}
+          </div>
+        )}
 
         {loading && (
           <div className="flex justify-start">

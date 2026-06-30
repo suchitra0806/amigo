@@ -195,7 +195,7 @@ export default function DashboardPage() {
             <StickyNote className="mx-auto mb-2 h-6 w-6 text-neutral-300 dark:text-neutral-600" />
             <p className="text-sm font-bold text-neutral-500 dark:text-neutral-400">No notes yet</p>
             <p className="mt-1 text-xs text-neutral-400 font-medium dark:text-neutral-500">
-              Jot down reminders, DSO questions, or anything you don't want to forget.
+              Jot down reminders, DSO questions, or anything you don&apos;t want to forget.
             </p>
           </div>
         ) : (

@@ -228,7 +228,7 @@ export default function OPTTrackerClient() {
       <div className={cn('rounded-2xl border-2 p-5 transition-colors', cardClass)}>
         {stats.notStarted ? (
           <p className={cn('text-sm font-bold', isOver ? 'text-white' : 'text-neutral-500')}>
-            Your OPT hasn't started yet.
+            Your OPT hasn&apos;t started yet.
           </p>
         ) : (
           <>

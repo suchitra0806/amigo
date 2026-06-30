@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Send, Loader2, GraduationCap, AlertTriangle, X } from 'lucide-react';
+import { Send, Loader2, GraduationCap, AlertTriangle, X, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface Message {
@@ -15,6 +15,8 @@ const WELCOME: Message = {
     "Hey! I'm Amigo AI — your F-1 compliance companion.\n\nAsk me about taxes, OPT/CPT, work authorization, FBAR, or anything else on your mind.\n\n⚠️ I'm an AI, not a lawyer or CPA. Always verify with your DSO.",
 };
 
+const STORAGE_KEY = 'amigo_chat_history';
+
 const SUGGESTED_QUESTIONS = [
   "When should I apply for OPT?",
   "Do I owe FICA taxes on OPT?",
@@ -24,7 +26,13 @@ const SUGGESTED_QUESTIONS = [
 ];
 
 export default function ChatWidget({ onClose }: { onClose: () => void }) {
-  const [messages, setMessages] = useState<Message[]>([WELCOME]);
+  const [messages, setMessages] = useState<Message[]>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) return JSON.parse(saved) as Message[];
+    } catch { /* ignore */ }
+    return [WELCOME];
+  });
   const [input, setInput]       = useState('');
   const [loading, setLoading]   = useState(false);
   const bottomRef               = useRef<HTMLDivElement>(null);
@@ -32,6 +40,19 @@ export default function ChatWidget({ onClose }: { onClose: () => void }) {
 
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
   useEffect(() => { inputRef.current?.focus(); }, []);
+
+  useEffect(() => {
+    try {
+      if (messages.some((m) => m.role === 'user')) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+      }
+    } catch { /* ignore */ }
+  }, [messages]);
+
+  function clearChat() {
+    setMessages([WELCOME]);
+    localStorage.removeItem(STORAGE_KEY);
+  }
 
   const hasUserMessage = messages.some((m) => m.role === 'user');
 
@@ -81,6 +102,15 @@ export default function ChatWidget({ onClose }: { onClose: () => void }) {
             <p className="text-[10px] text-neutral-400 font-semibold">F-1 student assistant</p>
           </div>
         </div>
+        {hasUserMessage && (
+          <button
+            onClick={clearChat}
+            aria-label="Clear chat"
+            className="flex h-7 w-7 items-center justify-center rounded-xl text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 transition-colors"
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+          </button>
+        )}
         <button
           onClick={onClose}
           aria-label="Close chat"

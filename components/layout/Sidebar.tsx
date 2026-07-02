@@ -12,6 +12,7 @@ import {
   UserCircle,
   CalendarClock,
   Calculator,
+  BookMarked,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import dynamic from 'next/dynamic';
@@ -24,6 +25,7 @@ const NAV_ITEMS = [
   { href: '/work-log',    label: 'Work Log',   icon: ClipboardList },
   { href: '/opt-tracker',  label: 'OPT Tracker',   icon: CalendarClock },
   { href: '/opt-deadline', label: 'OPT Deadlines', icon: Calculator },
+  { href: '/cpt-tracker',  label: 'CPT Tracker',   icon: BookMarked },
   { href: '/resources',  label: 'Resources',  icon: BookOpen },
   { href: '/profile',    label: 'My Profile', icon: UserCircle },
 ];
